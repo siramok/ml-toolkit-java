@@ -212,53 +212,52 @@ public class MLSystemManager {
 							normalize = true;
 							break;
 						case "-A":
-							arff = argv[++i];
+							if (++i == argv.length) {
+								throw new IndexOutOfBoundsException("[ArgParser] ARFF_File was not provided");
+							}
+							arff = argv[i];
 							break;
 						case "-L":
-							learner = argv[++i];
+							if (++i == argv.length) {
+								throw new IndexOutOfBoundsException("[ArgParser] learningAlgorithm was not provided");
+							}
+							learner = argv[i];
 							break;
 						case "-E":
-							evaluation = argv[++i];
+							if (++i == argv.length) {
+								throw new IndexOutOfBoundsException("[ArgParser] evaluationMethod was not provided");
+							}
+							evaluation = argv[i];
 							// Additional Evaluation Parameters:
 							// static   - expects a test set name
 							// random   - expects a double representing the percentage of data to be used for testing (no stratification performed)
 							// cross    - expects the number of folds
 							// training - no additional parameter expected
 							if (argv[i].equals("static") || argv[i].equals("random") || argv[i].equals("cross")) {
-								evalExtra = argv[++i];
+								if (++i == argv.length) {
+									throw new IndexOutOfBoundsException("[ArgParser] Evaluation type '" + evaluation + "' expects an additional parameter");
+								}
+								evalExtra = argv[i];
 							} else if (!argv[i].equals("training")) {
-								System.out.println("Invalid Evaluation Method: " + argv[i]);
-								System.exit(0);
+								throw new IllegalArgumentException("[ArgParser] Invalid Evaluation Method: '" + argv[i] + "'");
 							}
 							break;
 						default:
-							System.out.println("Invalid parameter: " + argv[i]);
-							System.exit(0);
+							throw new IllegalArgumentException("[ArgParser] Unknown argument: " + argv[i]);
 					}
 			  	}
-		 
+
+				if (arff == null || learner == null || evaluation == null) {
+					throw new IllegalArgumentException("[ArgParser] One or more critical arguments were not provided");
+				}
 			}
 			catch (Exception e) {
+				System.out.println(e.getMessage() + "\n");
 				System.out.println("Usage:");
-				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E [evaluationMethod] {[extraParamters]} [OPTIONS]\n");
-				System.out.println("OPTIONS:");
-				System.out.println("-V Print the confusion matrix and learner accuracy on individual class values\n");
-
-				System.out.println("Possible evaluation methods are:");
-				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E training");
-				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E static [testARFF_File]");
-				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E random [%_ForTraining]");
-				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E cross [numOfFolds]\n");
-				System.exit(0);
-			}
-				
-			if (arff == null || learner == null || evaluation == null) {
-				System.out.println("Usage:");
-				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E [evaluationMethod] {[extraParamters]} [OPTIONS]\n");
-				System.out.println("OPTIONS:");
+				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E [evaluationMethod] {[extraParameters]} [OPTIONS]\n");
+				System.out.println("Options:");
 				System.out.println("-V Print the confusion matrix and learner accuracy on individual class values");
-				System.out.println("-N Use normalized data");
-				System.out.println();
+				System.out.println("-N Normalize the data\n");
 				System.out.println("Possible evaluation methods are:");
 				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E training");
 				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E static [testARFF_File]");
