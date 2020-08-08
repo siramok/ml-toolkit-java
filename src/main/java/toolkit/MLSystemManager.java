@@ -28,9 +28,6 @@ public class MLSystemManager {
 
 		//args = new String[]{"-L", "baseline", "-A", "data/iris.arff", "-E", "cross", "10", "-N"};
 
-		//Random rand = new Random(1234); // Use a seed for deterministic results (makes debugging easier)
-		Random rand = new Random(); // No seed for non-deterministic results
-
 		//Parse the command line arguments
 		ArgParser parser = new ArgParser(args);
 		String fileName = parser.getARFF(); //File specified by the user
@@ -39,7 +36,15 @@ public class MLSystemManager {
 		String evalParameter = parser.getEvalParameter(); //Evaluation parameters specified by the user
 		boolean printConfusionMatrix = parser.getVerbose(); 
 		boolean normalize = parser.getNormalize();
-		
+		long seed = parser.getSeed(); //Random seed specified by the user
+
+		if (seed == 0) {
+			seed = System.currentTimeMillis();
+		}
+
+		// Use a seed for deterministic results (makes debugging easier)
+		// Provide no seed for non-deterministic results
+		Random rand = new Random(seed);
 
 		// Load the ARFF file
 		DataMatrix fullDataMatrix = new DataMatrix();
@@ -56,6 +61,7 @@ public class MLSystemManager {
 		System.out.println("Dataset name: " + fileName);
 		System.out.println("Number of instances: " + fullDataMatrix.getRowCount());
 		System.out.println("Number of attributes: " + fullDataMatrix.getColCount());
+		System.out.println("Random seed: " + seed);
 		System.out.println("Learning algorithm: " + learnerName);
 		System.out.println("Evaluation method: " + evalMethod);
 		System.out.println();
@@ -199,38 +205,45 @@ public class MLSystemManager {
 		String evalExtra;
 		boolean verbose;
 		boolean normalize;
+		long seed;
 
 		//You can add more options for specific learning models if you wish
 		public ArgParser(String[] argv) {
 			try {
 			 	for (int i = 0; i < argv.length; i++) {
-					switch (argv[i]) {
-						case "-V":
+					switch (argv[i].toLowerCase()) {
+						case "-v":
 							verbose = true;
 							break;
-						case "-N":
+						case "-n":
 							normalize = true;
 							break;
-						case "-A":
+						case "-s":
+							if (++i == argv.length) {
+								throw new IndexOutOfBoundsException("[ArgParser] A seed value was not provided");
+							}
+							seed = Long.parseLong(argv[i]);
+							break;
+						case "-a":
 							if (++i == argv.length) {
 								throw new IndexOutOfBoundsException("[ArgParser] ARFF_File was not provided");
 							}
 							arff = argv[i];
 							break;
-						case "-L":
+						case "-l":
 							if (++i == argv.length) {
 								throw new IndexOutOfBoundsException("[ArgParser] learningAlgorithm was not provided");
 							}
 							learner = argv[i];
 							break;
-						case "-E":
+						case "-e":
 							if (++i == argv.length) {
 								throw new IndexOutOfBoundsException("[ArgParser] evaluationMethod was not provided");
 							}
 							evaluation = argv[i];
 							// Additional Evaluation Parameters:
 							// static   - expects a test set name
-							// random   - expects a double representing the percentage of data to be used for testing (no stratification performed)
+							// random   - expects a double representing the percentage of data to be used for training (no stratification performed)
 							// cross    - expects the number of folds
 							// training - no additional parameter expected
 							if (argv[i].equals("static") || argv[i].equals("random") || argv[i].equals("cross")) {
@@ -257,7 +270,8 @@ public class MLSystemManager {
 				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E [evaluationMethod] {[extraParameters]} [OPTIONS]\n");
 				System.out.println("Options:");
 				System.out.println("-V Print the confusion matrix and learner accuracy on individual class values");
-				System.out.println("-N Normalize the data\n");
+				System.out.println("-N Normalize the data");
+				System.out.println("-S [number] Provide a seed value for deterministic results (0 is ignored)\n");
 				System.out.println("Possible evaluation methods are:");
 				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E training");
 				System.out.println("MLSystemManager -L [learningAlgorithm] -A [ARFF_File] -E static [testARFF_File]");
@@ -274,6 +288,7 @@ public class MLSystemManager {
 		public String getEvalParameter() { return evalExtra; }
 		public boolean getVerbose() { return verbose; } 
 		public boolean getNormalize() { return normalize; }
+		public long getSeed() { return seed; }
 	}
 
 	public static void main(String[] args) throws Exception
