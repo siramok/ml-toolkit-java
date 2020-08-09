@@ -4,6 +4,8 @@
 // ----------------------------------------------------------------
 package toolkit;
 
+import siramok.learners.InstanceBasedLearner;
+
 import java.util.Random;
 
 public class MLSystemManager {
@@ -16,12 +18,14 @@ public class MLSystemManager {
 	 */
 	public SupervisedLearner getLearner(String model, Random rand) throws Exception
 	{
-		if (model.equals("baseline")) return new BaselineLearner();
-		// else if (model.equals("perceptron")) return new Perceptron(rand);
-		// else if (model.equals("neuralnet")) return new NeuralNet(rand);
-		// else if (model.equals("decisiontree")) return new DecisionTree();
-		// else if (model.equals("knn")) return new InstanceBasedLearner();
-		else throw new Exception("Unrecognized model: " + model);
+		switch (model) {
+			case "baseline": return new BaselineLearner();
+			//case "perceptron": return new Perceptron(rand);
+			//case "neuralnet": return new NeuralNet(rand);
+			//case "decisiontree": return new DecisionTree();
+			//case "knn": return new InstanceBasedLearner();
+			default: throw new Exception("Unrecognized model: " + model);
+		}
 	}
 
 	public void run(String[] args) throws Exception {
