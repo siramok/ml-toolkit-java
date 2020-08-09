@@ -81,13 +81,13 @@ public class MLSystemManager {
 				case "training": {
 					System.out.println("Calculating accuracy on training set...");
 					DataMatrix featuresOnlyDataMatrix = new DataMatrix(fullDataMatrix, 0, 0, fullDataMatrix.getRowCount(), fullDataMatrix.getColCount() - 1);
-					DataMatrix labelsLabelsOnlyDataMatrix = new DataMatrix(fullDataMatrix, 0, fullDataMatrix.getColCount() - 1, fullDataMatrix.getRowCount(), 1);
+					DataMatrix labelsOnlyDataMatrix = new DataMatrix(fullDataMatrix, 0, fullDataMatrix.getColCount() - 1, fullDataMatrix.getRowCount(), 1);
 					DataMatrix confusionMatrix = new DataMatrix();
 					double startTime = System.currentTimeMillis();
-					supervisedLearner.train(featuresOnlyDataMatrix, labelsLabelsOnlyDataMatrix);
+					supervisedLearner.train(featuresOnlyDataMatrix, labelsOnlyDataMatrix);
 					double elapsedTime = System.currentTimeMillis() - startTime;
 					System.out.println("Time to train (in seconds): " + elapsedTime / 1000.0);
-					double predictiveAccuracy = supervisedLearner.measurePredictiveAccuracy(featuresOnlyDataMatrix, labelsLabelsOnlyDataMatrix, confusionMatrix);
+					double predictiveAccuracy = supervisedLearner.measurePredictiveAccuracy(featuresOnlyDataMatrix, labelsOnlyDataMatrix, confusionMatrix);
 					System.out.println("Training set accuracy: " + predictiveAccuracy);
 					if (printConfusionMatrix) {
 						System.out.println("\nConfusion matrix: (Row=target value, Col=predicted value)");
@@ -293,7 +293,13 @@ public class MLSystemManager {
 
 	public static void main(String[] args) throws Exception
 	{
-		MLSystemManager ml = new MLSystemManager();
-		ml.run(args);
+		try {
+			MLSystemManager ml = new MLSystemManager();
+			ml.run(args);
+		}
+		catch (Exception e) {
+			System.out.println("Runtime Error: " + e.getMessage() + "\n");
+			System.exit(0);
+		}
 	}
 }
