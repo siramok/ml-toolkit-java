@@ -85,10 +85,10 @@ public abstract class SupervisedLearner {
 				double[] featuresForInstance = featuresOnlyDataMatrix.getRow(i);
 				int target = (int) labelsOnlyDataMatrix.getValueAt(i, 0);
 				if(target >= labelValues)
-					throw new Exception("The label is out of ransge");
+					throw new Exception("The label is out of range");
 				double[] predictedLabels = new double[1]; 
 				predictInstanceLabelsFromFeatures(featuresForInstance, predictedLabels);
-				int prediction = (int)predictedLabels[0];
+				int prediction = (int) predictedLabels[0];
 				if(confusion != null)
 					confusion.setValue(target, prediction, confusion.getValueAt(target, prediction) + 1);
 				if(prediction == target)
