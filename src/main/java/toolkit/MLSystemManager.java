@@ -4,8 +4,6 @@
 // ----------------------------------------------------------------
 package toolkit;
 
-import siramok.learners.InstanceBasedLearner;
-
 import java.util.Random;
 
 public class MLSystemManager {

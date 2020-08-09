@@ -98,59 +98,57 @@ public class DataMatrix {
 					
 					Scanner lineScanner = new Scanner(line);
 					String firstToken = lineScanner.next().toUpperCase();
-					
-					if (firstToken.equals("@RELATION")) {
-						lineScanner.nextLine();
-					}
-					
-					if (firstToken.equals("@ATTRIBUTE")) {
-						TreeMap<String, Integer> ste = new TreeMap<String, Integer>();
-						valueIndexByAttributeColAndValueName.add(ste);
-						TreeMap<Integer, String> ets = new TreeMap<Integer, String>();
-						valueNameByAttributeColAndValueIndex.add(ets);
 
-						Scanner secondaryLineScanner = new Scanner(line);
-						if (line.indexOf("'") != -1) secondaryLineScanner.useDelimiter("'");
-						secondaryLineScanner.next();
-						String attributeName = secondaryLineScanner.next();
-						if (line.indexOf("'") != -1) attributeName = "'" + attributeName + "'";
-						attributeNamesByColIndex.add(attributeName);
+					switch (firstToken) {
+						case "@RELATION":
+							lineScanner.nextLine();
+							break;
+						case "@ATTRIBUTE":
+							TreeMap<String, Integer> ste = new TreeMap<String, Integer>();
+							valueIndexByAttributeColAndValueName.add(ste);
+							TreeMap<Integer, String> ets = new TreeMap<Integer, String>();
+							valueNameByAttributeColAndValueIndex.add(ets);
 
-						int vals = 0;
-						String type = secondaryLineScanner.next().trim().toUpperCase();
-						if (type.equals("REAL") || type.equals("CONTINUOUS") || type.equals("INTEGER")) {
-						}
-						else {
-							try {
-								String values = line.substring(line.indexOf("{")+1,line.indexOf("}"));
-								Scanner v = new Scanner(values);
-								v.useDelimiter(",");
-								while (v.hasNext()) {
-									String value = v.next().trim();
-									if(value.length() > 0)
-									{
-										ste.put(value, new Integer(vals));
-										ets.put(new Integer(vals), value);
-										vals++;
+							Scanner secondaryLineScanner = new Scanner(line);
+							if (line.contains("'")) secondaryLineScanner.useDelimiter("'");
+							secondaryLineScanner.next();
+							String attributeName = secondaryLineScanner.next();
+							if (line.contains("'")) attributeName = "'" + attributeName + "'";
+							attributeNamesByColIndex.add(attributeName);
+
+							int vals = 0;
+							String type = secondaryLineScanner.next().trim().toUpperCase();
+							if (!type.equals("REAL") && !type.equals("CONTINUOUS") && !type.equals("INTEGER")) {
+								try {
+									String values = line.substring(line.indexOf("{") + 1, line.indexOf("}"));
+									Scanner v = new Scanner(values);
+									v.useDelimiter(",");
+									while (v.hasNext()) {
+										String value = v.next().trim();
+										if (value.length() > 0) {
+											ste.put(value, vals);
+											ets.put(vals, value);
+											vals++;
+										}
 									}
+									v.close();
+								} catch (Exception e) {
+									secondaryLineScanner.close();
+									fileScanner.close();
+									throw new Exception("Error parsing line: " + line + "\n" + e.toString());
 								}
-								v.close();
 							}
-							catch (Exception e) {
-								secondaryLineScanner.close();
-								fileScanner.close();
-								throw new Exception("Error parsing line: " + line + "\n" + e.toString());
-							}
-						}
-						secondaryLineScanner.close();
+							secondaryLineScanner.close();
+							break;
+						case "@DATA":
+							READDATA = true;
+							break;
 					}
-					if (firstToken.equals("@DATA")) {
-						READDATA = true;
-					}
+
 					lineScanner.close();
 				}
 				else {
-					double[] newrow = new double[getColCount()];
+					double[] newRow = new double[getColCount()];
 					int curPos = 0;
 
 					try {
@@ -158,7 +156,6 @@ public class DataMatrix {
 						t.useDelimiter(",");
 						while (t.hasNext()) {
 							String textValue = t.next().trim();
-							//System.out.println(textValue);
 
 							if (textValue.length() > 0) {
 								double doubleValue;
@@ -181,7 +178,7 @@ public class DataMatrix {
 									}
 								}
 								
-								newrow[curPos] = doubleValue;
+								newRow[curPos] = doubleValue;
 								curPos++;
 							}
 						}
@@ -191,7 +188,7 @@ public class DataMatrix {
 						fileScanner.close();
 						throw new Exception("Error parsing line: " + line + "\n" + e.toString());
 					}
-					matrixData.add(newrow);
+					matrixData.add(newRow);
 				}
 			}
 		}
@@ -247,7 +244,6 @@ public class DataMatrix {
 			matrixData.set(n - 1, getRow(i));
 			matrixData.set(i, tmp);
 
-
 			double[] tmp1 = buddy.getRow(n - 1);
 			buddy.matrixData.set(n - 1, buddy.getRow(i));
 			buddy.matrixData.set(i, tmp1);
@@ -260,8 +256,7 @@ public class DataMatrix {
 		int count = 0;
 		for(int i = 0; i < getRowCount(); i++) {
 			double v = getValueAt(i, col);
-			if(v != MISSING)
-			{
+			if(v != MISSING) {
 				sum += v;
 				count++;
 			}
@@ -302,23 +297,20 @@ public class DataMatrix {
 		TreeMap<Double, Integer> tm = new TreeMap<Double, Integer>();
 		for(int i = 0; i < getRowCount(); i++) {
 			double v = getValueAt(i, col);
-			if(v != MISSING)
-			{
+			if(v != MISSING) {
 				Integer count = tm.get(v);
 				if(count == null)
-					tm.put(v, new Integer(1));
+					tm.put(v, 1);
 				else
-					tm.put(v, new Integer(count.intValue() + 1));
+					tm.put(v, count.intValue() + 1);
 			}
 		}
 		int maxCount = 0;
 		double val = MISSING;
 		Iterator< Entry<Double, Integer> > it = tm.entrySet().iterator();
-		while(it.hasNext())
-		{
+		while (it.hasNext()) {
 			Entry<Double, Integer> e = it.next();
-			if(e.getValue() > maxCount)
-			{
+			if(e.getValue() > maxCount) {
 				maxCount = e.getValue();
 				val = e.getKey();
 			}
@@ -386,7 +378,7 @@ public class DataMatrix {
 				else
 					System.out.print(valueNameByAttributeColAndValueIndex.get(j).get((int)r[j]));
 			}
-			System.out.println("");
+			System.out.println();
 		}
 	}
 }
