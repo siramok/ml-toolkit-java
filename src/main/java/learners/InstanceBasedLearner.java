@@ -1,9 +1,13 @@
-package siramok.learners;
+package learners;
 
 import toolkit.DataMatrix;
 import toolkit.SupervisedLearner;
 
-public class DecisionTree extends SupervisedLearner {
+public class InstanceBasedLearner extends SupervisedLearner {
+    public InstanceBasedLearner() {
+        throw new UnsupportedOperationException("The InstanceBasedLearner class has not been implemented yet.");
+    }
+
     @Override
     public void train(DataMatrix featuresOnlyDataMatrix, DataMatrix labelsOnlyDataMatrix) throws Exception {
 
