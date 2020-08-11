@@ -6,6 +6,11 @@ package toolkit;
 
 import java.util.Random;
 
+import learners.Perceptron;
+import learners.NeuralNet;
+import learners.DecisionTree;
+import learners.InstanceBasedLearner;
+
 public class MLSystemManager {
 	
 	/**
@@ -18,10 +23,10 @@ public class MLSystemManager {
 	{
 		switch (model) {
 			case "baseline": return new BaselineLearner();
-			//case "perceptron": return new Perceptron(rand);
-			//case "neuralnet": return new NeuralNet(rand);
-			//case "decisiontree": return new DecisionTree();
-			//case "knn": return new InstanceBasedLearner();
+			case "perceptron": return new Perceptron(rand);
+			case "neuralnet": return new NeuralNet(rand);
+			case "decisiontree": return new DecisionTree();
+			case "knn": return new InstanceBasedLearner();
 			default: throw new Exception("Unrecognized model: " + model);
 		}
 	}

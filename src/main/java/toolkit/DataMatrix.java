@@ -196,35 +196,35 @@ public class DataMatrix {
 	}
 
 	// Returns the number of rows in the matrix
-	int getRowCount() { return matrixData.size(); }
+	public int getRowCount() { return matrixData.size(); }
 
 	// Returns the number of columns (or attributes) in the matrix
-	int getColCount() { return attributeNamesByColIndex.size(); }
+	public int getColCount() { return attributeNamesByColIndex.size(); }
 
 	// Returns the specified row
-	double[] getRow(int r) { return matrixData.get(r); }
+	public double[] getRow(int r) { return matrixData.get(r); }
 
 	// Returns the element at the specified row and column
-	double getValueAt(int row, int col) { return matrixData.get(row)[col]; }
+	public double getValueAt(int row, int col) { return matrixData.get(row)[col]; }
 
 	// Sets the value at the specified row and column
-	void setValue(int row, int col, double newValue) { getRow(row)[col] = newValue; }
+	public void setValue(int row, int col, double newValue) { getRow(row)[col] = newValue; }
 
 	// Returns the name of the specified attribute
-	String getAttributeNameAtColumn(int col) { return attributeNamesByColIndex.get(col); }
+	public String getAttributeNameAtColumn(int col) { return attributeNamesByColIndex.get(col); }
 
 	// Set the name of the specified attribute
 	void setAttributeName(int col, String newName) { attributeNamesByColIndex.set(col, newName); }
 
 	// Returns the name of the specified value
-	String getAttributeValueName(int attributeIndex, int valueIndex) { return valueNameByAttributeColAndValueIndex.get(attributeIndex).get(valueIndex); }
+	public String getAttributeValueName(int attributeIndex, int valueIndex) { return valueNameByAttributeColAndValueIndex.get(attributeIndex).get(valueIndex); }
 
 	// Returns the number of values associated with the specified attribute (or column)
 	// 0=continuous, 2=binary, 3=trinary, etc.
-	int getValueCountForAttributeAtColumn(int col) { return valueNameByAttributeColAndValueIndex.get(col).size(); }
+	public int getValueCountForAttributeAtColumn(int col) { return valueNameByAttributeColAndValueIndex.get(col).size(); }
 	
 	// Returns true if the attribute at column is continuous
-	boolean isAttributeAtColumnContinuous(int col) { return getValueCountForAttributeAtColumn(col) == 0; }
+	public boolean isAttributeAtColumnContinuous(int col) { return getValueCountForAttributeAtColumn(col) == 0; }
 
 	// Shuffles the row order
 	void shuffleRowOrder(Random rand) {
@@ -251,7 +251,7 @@ public class DataMatrix {
 	}
 
 	// Returns the mean of the specified column
-	double getColumnMean(int col) {
+	public double getColumnMean(int col) {
 		double sum = 0;
 		int count = 0;
 		for(int i = 0; i < getRowCount(); i++) {
@@ -265,7 +265,7 @@ public class DataMatrix {
 	}
 
 	// Returns the min value in the specified column
-	double getColumnMin(int col) {
+	public double getColumnMin(int col) {
 		double m = MISSING;
 		for(int i = 0; i < getRowCount(); i++) {
 			double v = getValueAt(i, col);
@@ -279,7 +279,7 @@ public class DataMatrix {
 	}
 
 	// Returns the max value in the specified column
-	double getColumnMax(int col) {
+	public double getColumnMax(int col) {
 		double m = MISSING;
 		for(int i = 0; i < getRowCount(); i++) {
 			double v = getValueAt(i, col);
@@ -293,7 +293,7 @@ public class DataMatrix {
 	}
 
 	// Returns the most common value in the specified column
-	double getMostCommonValueForColumn(int col) {
+	public double getMostCommonValueForColumn(int col) {
 		TreeMap<Double, Integer> tm = new TreeMap<Double, Integer>();
 		for(int i = 0; i < getRowCount(); i++) {
 			double v = getValueAt(i, col);
@@ -349,7 +349,7 @@ public class DataMatrix {
 		}
 	}
 
-	void print() {
+	public void print() {
 		System.out.println("@RELATION Untitled");
 		for(int i = 0; i < attributeNamesByColIndex.size(); i++) {
 			System.out.print("@ATTRIBUTE " + attributeNamesByColIndex.get(i));
